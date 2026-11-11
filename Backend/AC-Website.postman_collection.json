@@ -1,0 +1,1243 @@
+{
+  "info": {
+    "name": "AC Website API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Run top to bottom for the full flow. Logins store tokens; created ids are stored in collection variables."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "techToken",
+      "value": ""
+    },
+    {
+      "key": "enquiryId",
+      "value": ""
+    },
+    {
+      "key": "clientId",
+      "value": ""
+    },
+    {
+      "key": "technicianId",
+      "value": ""
+    },
+    {
+      "key": "serviceId",
+      "value": ""
+    },
+    {
+      "key": "reportId",
+      "value": ""
+    },
+    {
+      "key": "invoiceId",
+      "value": ""
+    },
+    {
+      "key": "transactionId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Admin login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"ChangeMe123!\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.token) pm.collectionVariables.set(\"adminToken\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        },
+        {
+          "name": "Update my profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/me",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"08000000000\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Change password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/change-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"ChangeMe123!\",\n  \"newPassword\": \"NewPassword123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Forgot password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/forgot-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\"\n}"
+            },
+            "description": "Emails a reset link (valid 30 min) to {CLIENT_URL}/reset-password?token=... Always returns the same message. Needs SMTP; in development without SMTP the link is printed in the server console."
+          }
+        },
+        {
+          "name": "Reset password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/reset-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"<64-char token from the reset link>\",\n  \"password\": \"NewPass123!\"\n}"
+            },
+            "description": "Sets the new password, logs out all other devices and returns a fresh token."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.token) pm.collectionVariables.set(\"adminToken\", j.token);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Technicians (admin)",
+      "item": [
+        {
+          "name": "Create technician",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/technicians",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tunde Tech\",\n  \"email\": \"tunde@example.com\",\n  \"phone\": \"08051112222\",\n  \"password\": \"TechPass123\",\n  \"specialization\": \"Split units\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.technician && j.technician._id) pm.collectionVariables.set(\"technicianId\", j.technician._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List technicians",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/technicians?isActive=true"
+          }
+        },
+        {
+          "name": "Get technician",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/technicians/{{technicianId}}"
+          }
+        },
+        {
+          "name": "Update technician",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/technicians/{{technicianId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"specialization\": \"Split & cassette units\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reset technician password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/technicians/{{technicianId}}/reset-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"TechPass123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Deactivate technician",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/technicians/{{technicianId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Enquiries",
+      "item": [
+        {
+          "name": "Submit enquiry (public contact form)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/enquiries",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ada Obi\",\n  \"email\": \"ada@example.com\",\n  \"phone\": \"08031234567\",\n  \"address\": \"12 Allen Ave, Ikeja\",\n  \"serviceType\": \"repair\",\n  \"message\": \"My split AC is leaking water\",\n  \"preferredDate\": \"2026-10-25\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.enquiryId) pm.collectionVariables.set(\"enquiryId\", j.enquiryId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List enquiries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/enquiries?status=new&page=1&limit=20"
+          }
+        },
+        {
+          "name": "Get enquiry",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/enquiries/{{enquiryId}}"
+          }
+        },
+        {
+          "name": "Update enquiry status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/enquiries/{{enquiryId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"contacted\",\n  \"adminNotes\": \"Called client\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Convert enquiry to service",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/enquiries/{{enquiryId}}/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": \"{{technicianId}}\",\n  \"scheduledDate\": \"2026-10-25\",\n  \"priority\": \"high\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.service && j.service._id) pm.collectionVariables.set(\"serviceId\", j.service._id);",
+                  "if (j && j.client && j.client._id) pm.collectionVariables.set(\"clientId\", j.client._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete enquiry",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/enquiries/{{enquiryId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Clients (admin)",
+      "item": [
+        {
+          "name": "Create client",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clients",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bola Ade\",\n  \"email\": \"bola@example.com\",\n  \"phone\": \"08099998888\",\n  \"address\": \"5 Bode Thomas, Surulere\",\n  \"city\": \"Lagos\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List clients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clients?search=ada"
+          }
+        },
+        {
+          "name": "Get client (with history)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clients/{{clientId}}"
+          }
+        },
+        {
+          "name": "Update client",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clients/{{clientId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Prefers morning visits\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete client",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clients/{{clientId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Services (admin)",
+      "item": [
+        {
+          "name": "Create service",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": \"{{clientId}}\",\n  \"title\": \"Quarterly maintenance\",\n  \"serviceType\": \"maintenance\",\n  \"scheduledDate\": \"2026-11-01\",\n  \"technicianId\": \"{{technicianId}}\",\n  \"acUnits\": [\n    {\n      \"brand\": \"LG\",\n      \"type\": \"split\",\n      \"capacity\": \"1.5HP\",\n      \"location\": \"Living room\"\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "List services",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services?status=assigned"
+          }
+        },
+        {
+          "name": "Get service",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}"
+          }
+        },
+        {
+          "name": "Update service",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priority\": \"urgent\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Assign technician",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}/assign",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": \"{{technicianId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Set status (admin override)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"cancelled\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete service",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Technician workflow",
+      "item": [
+        {
+          "name": "Technician login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"tunde@example.com\",\n  \"password\": \"TechPass123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.token) pm.collectionVariables.set(\"techToken\", j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "My dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/dashboard"
+          }
+        },
+        {
+          "name": "My services",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services"
+          }
+        },
+        {
+          "name": "Start job",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}/progress",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_progress\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Create service report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceId\": \"{{serviceId}}\",\n  \"arrivalTime\": \"2026-10-25T09:00:00Z\",\n  \"findings\": \"Blocked drain pipe, dirty filters\",\n  \"workDone\": \"Cleared drain line, washed filters, checked gas pressure\",\n  \"partsUsed\": [\n    {\n      \"name\": \"Drain hose\",\n      \"quantity\": 1\n    }\n  ],\n  \"recommendations\": \"Service every 3 months\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.report && j.report._id) pm.collectionVariables.set(\"reportId\", j.report._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update report",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports/{{reportId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"departureTime\": \"2026-10-25T11:00:00Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Upload report photos (form-data, field: photos)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports/{{reportId}}/photos",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photos",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sign report - technician",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports/{{reportId}}/sign",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"signer\": \"technician\",\n  \"name\": \"Tunde Tech\",\n  \"signature\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Sign report - client",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports/{{reportId}}/sign",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"signer\": \"client\",\n  \"name\": \"Ada Obi\",\n  \"signature\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Complete job",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/services/{{serviceId}}/progress",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\",\n  \"technicianNotes\": \"All units working\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List my reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports"
+          }
+        },
+        {
+          "name": "Get report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{techToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports/{{reportId}}"
+          }
+        },
+        {
+          "name": "Get report by service (admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports/service/{{serviceId}}"
+          }
+        },
+        {
+          "name": "Download report PDF (use Send and Download)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports/{{reportId}}/pdf",
+            "description": "Admin or the report's technician (use {{techToken}}). Add ?inline=true to view in the browser. Unsigned reports are marked DRAFT."
+          }
+        },
+        {
+          "name": "Email signed report to client (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports/{{reportId}}/send-email",
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "description": "Sends the PDF to the client's email, or pass { \"email\": \"...\" } to override. Report must be signed by both parties."
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Invoices (admin)",
+      "item": [
+        {
+          "name": "Create invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/invoices",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceId\": \"{{serviceId}}\",\n  \"items\": [\n    {\n      \"description\": \"Repair labour\",\n      \"quantity\": 1,\n      \"unitPrice\": 20000\n    },\n    {\n      \"description\": \"Drain hose\",\n      \"quantity\": 2,\n      \"unitPrice\": 2500\n    }\n  ],\n  \"taxRate\": 7.5,\n  \"discount\": 1000,\n  \"dueDate\": \"2026-11-05\",\n  \"notes\": \"Pay to: AC Services Ltd, Bank XYZ, 0123456789\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.invoice && j.invoice._id) pm.collectionVariables.set(\"invoiceId\", j.invoice._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List invoices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/invoices?status=unpaid"
+          }
+        },
+        {
+          "name": "Get invoice (with payments)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/invoices/{{invoiceId}}"
+          }
+        },
+        {
+          "name": "Update invoice (before any payment)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/invoices/{{invoiceId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"discount\": 1000\n}"
+            }
+          }
+        },
+        {
+          "name": "Download PDF (use Send and Download)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/invoices/{{invoiceId}}/pdf"
+          }
+        },
+        {
+          "name": "Send invoice by email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/invoices/{{invoiceId}}/send-email",
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          }
+        },
+        {
+          "name": "Share invoice to WhatsApp (returns wa.me link)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/invoices/{{invoiceId}}/share-whatsapp",
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          }
+        },
+        {
+          "name": "Cancel invoice",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/invoices/{{invoiceId}}/cancel"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Transactions (admin)",
+      "item": [
+        {
+          "name": "Record payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": \"{{invoiceId}}\",\n  \"amount\": 10000,\n  \"method\": \"bank_transfer\",\n  \"paymentRef\": \"TRF-12345\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j && j.transaction && j.transaction._id) pm.collectionVariables.set(\"transactionId\", j.transaction._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Record final payment (invoice -> paid)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": \"{{invoiceId}}\",\n  \"amount\": 15800,\n  \"method\": \"cash\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Transaction history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions?from=2026-01-01&to=2026-12-31"
+          }
+        },
+        {
+          "name": "Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/summary"
+          }
+        },
+        {
+          "name": "Get transaction",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{transactionId}}"
+          }
+        },
+        {
+          "name": "Reverse transaction",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/transactions/{{transactionId}}/reverse",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Recorded in error\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Dashboard",
+      "item": [
+        {
+          "name": "Admin dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/dashboard"
+          }
+        },
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/health"
+          }
+        }
+      ]
+    }
+  ]
+}

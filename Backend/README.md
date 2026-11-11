@@ -1,10 +1,10 @@
-# AC Website – Backend API
+# Haycon Solutions Limited – Backend API
 
-REST API for an air-conditioning service business. It runs the whole job lifecycle:
+REST API for the Haycon Solutions Limited air-conditioning service business. It runs the whole job lifecycle:
 
 **website enquiry → client → service job → technician report (signed on site) → invoice → payments**
 
-Built with Node.js, Express 5, MongoDB (Mongoose) and JWT authentication.
+Built with Node.js, Express 5, MongoDB (Mongoose) and JWT authentication. The React website and staff dashboard that use this API are in [`../Frontend/ACFrontend`](../Frontend/ACFrontend/README.md).
 
 ---
 
@@ -13,6 +13,7 @@ Built with Node.js, Express 5, MongoDB (Mongoose) and JWT authentication.
 - [Features](#features)
 - [Requirements](#requirements)
 - [Getting started](#getting-started)
+- [Creating the admin and technicians](#creating-the-admin-and-technicians)
 - [Environment variables](#environment-variables)
 - [Scripts](#scripts)
 - [Roles and workflow](#roles-and-workflow)
@@ -71,6 +72,19 @@ Then import **`AC-Website.postman_collection.json`** into Postman. The login req
 
 > **Don't use port 6000.** Chrome and Firefox block it (`ERR_UNSAFE_PORT`), so the frontend couldn't reach the API.
 
+To run the full system, start the frontend as well (`npm run dev` in `../Frontend/ACFrontend`) and open `http://localhost:5173`.
+
+## Creating the admin and technicians
+
+There is no public sign-up. Every account is created by an admin, and the first admin comes from `.env`.
+
+1. **First admin.** Set `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (and optionally `ADMIN_PHONE`) in `.env`, then run `npm run seed`. The password must be at least 8 characters. If an account with that email already exists, nothing changes, so it's safe to run again. Log in at `http://localhost:5173/login` and change the password under **Profile**.
+2. **Technicians.** As the admin, open **Technicians → + New technician** in the dashboard (or call `POST /api/technicians`). Enter their name, email, phone, a starting password and an optional specialization. Give them those login details; they log in on the same page and can change their password under **Profile**.
+3. **Forgotten passwords.** Anyone can use **Forgot password** on the login page (needs SMTP). An admin can also set a new technician password from the technician's page (`PATCH /api/technicians/:id/reset-password`).
+4. **Leavers.** Deactivate a technician instead of deleting them, so their job and report history is kept. Reassign their active jobs first.
+
+To add a second admin, run `npm run seed` again with a different `ADMIN_EMAIL`.
+
 ## Environment variables
 
 All variables are listed in [`.env.example`](.env.example). Never commit `.env`.
@@ -85,7 +99,7 @@ All variables are listed in [`.env.example`](.env.example). Never commit `.env`.
 | `CLIENT_URL` | | `http://localhost:5173` | Frontend origin(s) allowed by CORS, comma separated. The **first** one is used in password-reset and dashboard links. |
 | `API_URL` | | `http://localhost:5000` | Public URL of this API, used in shared invoice PDF links and local upload URLs |
 | `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_PHONE` | for `npm run seed` | – | First admin account |
-| `COMPANY_NAME`, `COMPANY_EMAIL`, `COMPANY_PHONE`, `COMPANY_ADDRESS` | | – | Printed on PDFs and emails |
+| `COMPANY_NAME`, `COMPANY_EMAIL`, `COMPANY_PHONE`, `COMPANY_ADDRESS` | | – | Printed on PDFs and emails. Copy the same values into the frontend's `VITE_COMPANY_*` so the website matches. |
 | `CURRENCY` | | `NGN` | Currency shown on invoices |
 | `TIMEZONE` | | `Africa/Lagos` | Time zone for dates on PDFs (servers usually run on UTC) |
 | `DEFAULT_COUNTRY_CODE` | | `234` | Turns local numbers like `0803…` into international format for WhatsApp |

@@ -7,11 +7,9 @@ import { COMPANY_INFO, MAIL_HREF, PHONE_HREF, SERVICE_LIST, WHATSAPP_HREF } from
 import { Icon } from "./SiteParts";
 
 const Logo = () => (
-  <Link to="/" className="logo">
-    <span className="logo-mark" aria-hidden>
-      ❄
-    </span>
-    {COMPANY}
+  <Link to="/" className="logo" aria-label={`${COMPANY} home`}>
+    <img className="logo-light" src="/images/logo.png" alt={COMPANY} width="640" height="209" />
+    <img className="logo-dark" src="/images/logo-white.png" alt="" width="640" height="216" />
   </Link>
 );
 
@@ -59,11 +57,8 @@ export function PublicLayout() {
 
       <header className="site-header">
         <div className="s-container header-inner">
-          <Link to="/" className="site-logo">
-            <span className="site-logo-mark" aria-hidden>
-              <Icon name="snow" size={22} />
-            </span>
-            <span>{COMPANY_INFO.name}</span>
+          <Link to="/" className="site-logo" aria-label={`${COMPANY_INFO.name} home`}>
+            <img src="/images/logo.png" alt={COMPANY_INFO.name} width="640" height="209" />
           </Link>
 
           <nav className={`site-nav ${open ? "open" : ""}`} aria-label="Main">
@@ -121,14 +116,11 @@ export function PublicLayout() {
       <footer className="site-footer">
         <div className="s-container footer-grid">
           <div>
-            <Link to="/" className="site-logo light">
-              <span className="site-logo-mark" aria-hidden>
-                <Icon name="snow" size={22} />
-              </span>
-              <span>{COMPANY_INFO.name}</span>
+            <Link to="/" className="site-logo light" aria-label={`${COMPANY_INFO.name} home`}>
+              <img src="/images/logo-white.png" alt={COMPANY_INFO.name} width="640" height="216" loading="lazy" />
             </Link>
             <p>
-              Air-conditioning installation, repair and maintenance for homes and businesses in {COMPANY_INFO.address}.
+              HVACR installation, repair and maintenance for homes and businesses in {COMPANY_INFO.address}.
             </p>
             <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="s-btn s-btn-primary s-btn-sm">
               Chat on WhatsApp

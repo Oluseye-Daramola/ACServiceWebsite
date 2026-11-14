@@ -32,7 +32,7 @@ export default function About() {
       <PageHero
         eyebrow="Who we are"
         title="About Us"
-        subtitle="Air-conditioning specialists serving homes and businesses in Lagos"
+        subtitle="HVACR company serving residences, commercials, and farm produce storage company in Nigeria, and Africa at large"
         image="/images/lagos-lagoon.jpg"
       />
 
@@ -50,14 +50,10 @@ export default function About() {
           <div>
             <SectionHead eyebrow="Welcome" title={`The story of ${COMPANY_INFO.name}`} />
             <p className="s-lead">
-              {COMPANY_INFO.name} is an air-conditioning company based in {COMPANY_INFO.address}. We started with a
-              simple aim: give Nigerian homes and businesses the same standard of cooling service they would expect
-              anywhere in the world.
+              {COMPANY_INFO.name} is a HVACR company based in  {COMPANY_INFO.address}. We started with a simple aim: give Nigerian homes and businesses the same standard of cooling service they would expect anywhere in the world.
             </p>
             <p>
-              Today our engineers install, repair and maintain systems for families, offices, shops, restaurants and
-              estates. Every job is booked, assigned, reported and signed off through our own service platform, so you
-              always know who is coming, what was done and what it cost.
+              Today, with our highly skilled, professional, and experienced technicians and engineers, we provide high-end experiences at an affordable rate to our clients. To us, Every project or service call is not just another job,  it is a reminder of how our clients have trusted us and we execute excellently.
             </p>
             <StatsRow />
           </div>
@@ -70,12 +66,12 @@ export default function About() {
             <div>
               <span className="s-eyebrow">Our mission</span>
               <p>
-                Keep every home and workplace we serve cool, healthy and energy-efficient with honest, expert service.
+                Providing clients their desired ambience temperature through climate-concious services and engineering.
               </p>
             </div>
             <div>
               <span className="s-eyebrow">Our vision</span>
-              <p>To be the most trusted air-conditioning partner in Nigeria, known for quality work and reliability.</p>
+              <p>To be the most trusted HVACR company partner in Nigeria, known for quality work and reliability.</p>
             </div>
           </div>
           <div className="values">
@@ -96,7 +92,6 @@ export default function About() {
         <div className="s-container">
           <SectionHead
             eyebrow="Behind the scenes"
-            title="Our team"
             text="Trained engineers and technicians who do the work, end to end."
             center
           />

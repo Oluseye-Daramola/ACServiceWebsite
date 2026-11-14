@@ -158,8 +158,8 @@ Most website text is in **[`src/content/site.js`](src/content/site.js)**, so you
 ACFrontend/
 ├── index.html               # tab title, meta description, Manrope font
 ├── public/
-│   ├── favicon.svg
-│   └── images/              # website photos
+│   ├── favicon.png, apple-touch-icon.png   # made from the logo icon
+│   └── images/              # website photos + logo.png (header) and logo-white.png (footer)
 └── src/
     ├── main.jsx             # entry: loads index.css then site.css
     ├── App.jsx              # all routes

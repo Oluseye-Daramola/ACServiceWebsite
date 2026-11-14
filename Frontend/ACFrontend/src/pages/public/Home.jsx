@@ -22,7 +22,7 @@ export default function Home() {
           <div className="hero-copy">
             <span className="s-eyebrow">Welcome to {COMPANY_INFO.name}</span>
             <h1>
-              Air-conditioning <span>installation, repair</span> &amp; maintenance
+              HVACR <span>installation, repair</span> &amp; maintenance
             </h1>
             <p>
               Trusted engineers keeping homes, offices and businesses across {COMPANY_INFO.address} cool all year round.
@@ -63,7 +63,7 @@ export default function Home() {
         <div className="s-container">
           <SectionHead
             eyebrow="One-stop solution"
-            title="Air-conditioning services"
+            title="HVACR services"
             text="From the first installation to years of reliable cooling, one team handles it all."
             center
           />

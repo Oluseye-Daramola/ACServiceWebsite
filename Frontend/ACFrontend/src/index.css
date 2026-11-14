@@ -1,28 +1,32 @@
+/* Brand colours from the Haycon logo: navy #004C7E, teal #00BD9D */
 :root {
-  --bg: #f5f7fa;
+  --brand-navy: #004c7e;
+  --brand-teal: #00bd9d;
+  --bg: #f3f7f9;
   --surface: #ffffff;
-  --surface-2: #f0f3f7;
-  --text: #1c2430;
-  --muted: #637083;
-  --border: #dfe4eb;
-  --primary: #0b6bcb;
-  --primary-hover: #0958a8;
-  --primary-soft: #e3f0fc;
+  --surface-2: #edf4f6;
+  --text: #17293a;
+  --muted: #5a6876;
+  --border: #dbe5ea;
+  --primary: #004c7e;
+  --primary-hover: #003a61;
+  --primary-soft: #e2eef5;
+  --on-primary: #ffffff;
   --danger: #c62f3b;
   --danger-soft: #fde8ea;
   --ok: #1d8348;
   --ok-soft: #e2f5ea;
   --warn: #a86400;
   --warn-soft: #fdf1dc;
-  --info: #0b6bcb;
-  --info-soft: #e3f0fc;
+  --info: #0a6aa8;
+  --info-soft: #e2eff8;
   --accent: #6c3fc4;
   --accent-soft: #efe8fb;
   --radius: 10px;
   --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.06);
   --sidebar: 240px;
   color-scheme: light;
-  font: 15px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
+  font: 15px/1.5 "Manrope", system-ui, "Segoe UI", Roboto, sans-serif;
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
@@ -30,23 +34,24 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f141b;
-    --surface: #161d27;
-    --surface-2: #1d2632;
-    --text: #e6ebf2;
-    --muted: #93a0b2;
-    --border: #2a3542;
-    --primary: #4ea3f5;
-    --primary-hover: #77b9f8;
-    --primary-soft: #16304a;
+    --bg: #06121c;
+    --surface: #0c1c29;
+    --surface-2: #122536;
+    --text: #e3ecf2;
+    --muted: #8ea2b2;
+    --border: #1e3345;
+    --primary: #00bd9d;
+    --primary-hover: #2fd3b5;
+    --primary-soft: #0e3433;
+    --on-primary: #03253d;
     --danger: #f2707a;
     --danger-soft: #3d1c21;
     --ok: #5ccf8c;
     --ok-soft: #173525;
     --warn: #f0b155;
     --warn-soft: #3a2b14;
-    --info: #4ea3f5;
-    --info-soft: #16304a;
+    --info: #5bb4ec;
+    --info-soft: #102f47;
     --accent: #ad8bf0;
     --accent-soft: #2a2140;
     color-scheme: dark;
@@ -86,7 +91,7 @@ img { max-width: 100%; }
 }
 .btn:hover { background: var(--surface-2); text-decoration: none; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
 .btn-primary:hover { background: var(--primary-hover); }
 .btn-danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); }
 .btn-danger:hover { background: var(--danger-soft); }
@@ -228,24 +233,24 @@ tr.grand td { font-weight: 700; font-size: 1.05rem; }
 .progress-steps li { counter-increment: step; padding: 5px 12px 5px 8px; border-radius: 99px; background: var(--surface-2); color: var(--muted); font-size: 0.85rem; }
 .progress-steps li::before { content: counter(step); display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--border); margin-right: 6px; font-size: 0.75rem; }
 .progress-steps li.current { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
-.progress-steps li.current::before { background: var(--primary); color: #fff; }
+.progress-steps li.current::before { background: var(--primary); color: var(--on-primary); }
 .progress-steps li.done { background: var(--ok-soft); color: var(--ok); }
 .progress-steps li.done::before { content: "✓"; background: var(--ok); color: #fff; }
 
 /* ---------- App shell ---------- */
 .shell { display: flex; min-height: 100vh; }
 .sidebar { width: var(--sidebar); flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 16px 12px; position: sticky; top: 0; height: 100vh; }
-.sidebar .logo { padding: 4px 8px 16px; }
+.sidebar .logo { padding: 2px 6px 18px; }
 .sidebar nav { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow-y: auto; }
 .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: var(--text); font-weight: 500; }
 .sidebar nav a:hover { background: var(--surface-2); text-decoration: none; }
-.sidebar nav a.active { background: var(--primary-soft); color: var(--primary); }
+.sidebar nav a.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; box-shadow: inset 3px 0 0 var(--brand-teal); }
 .nav-icon { width: 20px; text-align: center; }
 .sidebar-foot { border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
 .me { display: flex; gap: 10px; align-items: center; color: var(--text); padding: 6px; border-radius: 8px; }
 .me:hover { background: var(--surface-2); text-decoration: none; }
 .me small { display: block; color: var(--muted); text-transform: capitalize; }
-.avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--primary); color: #fff; font-weight: 700; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--primary); color: var(--on-primary); font-weight: 700; }
 .main { flex: 1; min-width: 0; }
 .topbar { display: flex; align-items: center; gap: 10px; padding: 10px 24px; border-bottom: 1px solid var(--border); background: var(--surface); }
 .menu-btn { display: none; }
@@ -256,9 +261,18 @@ tr.grand td { font-weight: 700; font-size: 1.05rem; }
 .back { display: inline-block; font-size: 0.85rem; margin-bottom: 4px; }
 .scrim { display: none; }
 
-.logo { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--text); font-size: 1.05rem; }
+/* Brand stripe (navy → teal, like the logo) across the top of the sidebar and top bar */
+.sidebar, .topbar { background: linear-gradient(90deg, var(--brand-navy), var(--brand-teal)) top / 100% 3px no-repeat, var(--surface); }
+
+/* Coloured logo in light mode, white logo in dark mode */
+.logo { display: flex; align-items: center; }
 .logo:hover { text-decoration: none; }
-.logo-mark { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--primary); color: #fff; }
+.logo img { height: 50px; width: auto; }
+.logo .logo-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .logo .logo-light { display: none; }
+  .logo .logo-dark { display: block; }
+}
 
 /* ---------- Public site (see site.css) ---------- */
 .section { padding: 48px 16px; }

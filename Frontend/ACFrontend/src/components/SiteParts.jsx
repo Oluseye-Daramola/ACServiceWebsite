@@ -194,7 +194,7 @@ export function CtaBand() {
     <section className="cta-band">
       <div className="s-container cta-inner">
         <div>
-          <h2>Quality air-conditioning solutions for homes and businesses</h2>
+          <h2>Quality HVACR solutions for homes and businesses</h2>
           <p>Book a visit online or call us on {COMPANY_INFO.phone}.</p>
         </div>
         <div className="cta-actions">
